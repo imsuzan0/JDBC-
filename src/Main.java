@@ -16,47 +16,55 @@ public class Main {
             Connection conn = DriverManager.getConnection(url, username, password);
             System.out.println("Connected to MySQL successfully!");
             System.out.println("Connected to: " + conn.getCatalog());
-            Statement statement = conn.createStatement();
 
-//            retrieve data from db:
-//            String query0 = "select * from students;";
-//            ResultSet resultSet = statement.executeQuery(query0);
-//            while (resultSet.next()) {
-//                int id = resultSet.getInt("id");
-//                String name = resultSet.getString("name");
-//                int age = resultSet.getInt("age");
-//                double marks = resultSet.getDouble("marks");
-//                System.out.println("ID : " + id);
-//                System.out.println("Name : " + name);
-//                System.out.println("Age : " + age);
-//                System.out.println("Marks : " + marks);
-//            }
-
-            //insert data into db
-//            String query1=String.format("insert into students(name,age,marks) values('%s',%o,%f)","Sujan",18,98.0);
-//            int rowsAffected=statement.executeUpdate(query1);
-//            if(rowsAffected>0){
-//                System.out.println("Data inserted successfully!");
+            //retrieve data from database
+//            String query="select marks from students where id = ?";
+//            PreparedStatement preparedStatement=conn.prepareStatement(query);
+//            preparedStatement.setInt(1,1);
+//            ResultSet resultSet=preparedStatement.executeQuery();
+//            if(resultSet.next()){
+//                double marks=resultSet.getDouble("marks");
+//                System.out.println(marks);
 //            }else{
-//                System.out.println("Data not inserted.");
+//                System.out.println("Marks not found!");
 //            }
 
-            //update data in database
-//            String query2 = String.format("update students set marks=%f where id =%d", 99.5, 2);
-//            int rowsAffected = statement.executeUpdate(query2);
+
+            //insert data into database
+//            String query = "insert into students(name,age,marks) values(?,?,?)";
+//            PreparedStatement preparedStatement = conn.prepareStatement(query);
+//            preparedStatement.setString(1, "Sujan");
+//            preparedStatement.setInt(2, 18);
+//            preparedStatement.setDouble(3, 99.0);
+//
+//            int rowsAffected = preparedStatement.executeUpdate();
+//            if (rowsAffected > 0) {
+//                System.out.println("Data inserted successfully!");
+//            } else {
+//                System.out.println("Data insertion failed!");
+//            }
+
+            //upate data in database
+//            String query="update students set name=? where id=?";
+//            PreparedStatement preparedStatement=conn.prepareStatement(query);
+//            preparedStatement.setString(1,"Amita");
+//            preparedStatement.setInt(2,1);
+//            int rowsAffected=preparedStatement.executeUpdate();
 //            if (rowsAffected > 0) {
 //                System.out.println("Data updated successfully!");
 //            } else {
-//                System.out.println("Data not updated.");
+//                System.out.println("Failed to update data!");
 //            }
 
-            //update data from database
-            String query3=String.format("delete from students where id=%d",2);
-            int rowsAffected=statement.executeUpdate(query3);
-            if (rowsAffected > 0) {
+            //delete data from database
+            String query="delete from students where id=?";
+            PreparedStatement preparedStatement=conn.prepareStatement(query);
+            preparedStatement.setInt(1,1);
+            int rowsAffected=preparedStatement.executeUpdate();
+            if(rowsAffected>0){
                 System.out.println("Data deleted successfully!");
-            } else {
-                System.out.println("Data not deleted.");
+            }else{
+                System.out.println("Failed to delete data!");
             }
 
             conn.close();
