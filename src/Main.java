@@ -1,5 +1,5 @@
 import java.sql.*;
-
+import java.util.Scanner;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class Main {
@@ -13,68 +13,55 @@ public class Main {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("MySQL JDBC Driver connected!");
+
             Connection conn = DriverManager.getConnection(url, username, password);
             System.out.println("Connected to MySQL successfully!");
             System.out.println("Connected to: " + conn.getCatalog());
 
-            //retrieve data from database
-//            String query="select marks from students where id = ?";
-//            PreparedStatement preparedStatement=conn.prepareStatement(query);
-//            preparedStatement.setInt(1,1);
-//            ResultSet resultSet=preparedStatement.executeQuery();
-//            if(resultSet.next()){
-//                double marks=resultSet.getDouble("marks");
-//                System.out.println(marks);
-//            }else{
-//                System.out.println("Marks not found!");
-//            }
-
-
-            //insert data into database
-//            String query = "insert into students(name,age,marks) values(?,?,?)";
-//            PreparedStatement preparedStatement = conn.prepareStatement(query);
-//            preparedStatement.setString(1, "Sujan");
-//            preparedStatement.setInt(2, 18);
-//            preparedStatement.setDouble(3, 99.0);
-//
-//            int rowsAffected = preparedStatement.executeUpdate();
-//            if (rowsAffected > 0) {
-//                System.out.println("Data inserted successfully!");
-//            } else {
-//                System.out.println("Data insertion failed!");
-//            }
-
-            //upate data in database
-//            String query="update students set name=? where id=?";
-//            PreparedStatement preparedStatement=conn.prepareStatement(query);
-//            preparedStatement.setString(1,"Amita");
-//            preparedStatement.setInt(2,1);
-//            int rowsAffected=preparedStatement.executeUpdate();
-//            if (rowsAffected > 0) {
-//                System.out.println("Data updated successfully!");
-//            } else {
-//                System.out.println("Failed to update data!");
-//            }
-
-            //delete data from database
-            String query="delete from students where id=?";
+            Scanner scanner = new Scanner(System.in);
+            String query = "INSERT INTO students(name, age, marks) VALUES(?,?,?)";
             PreparedStatement preparedStatement=conn.prepareStatement(query);
-            preparedStatement.setInt(1,1);
-            int rowsAffected=preparedStatement.executeUpdate();
-            if(rowsAffected>0){
-                System.out.println("Data deleted successfully!");
-            }else{
-                System.out.println("Failed to delete data!");
+
+            while (true) {
+                System.out.print("Enter name: ");
+                String name = scanner.next();
+
+                System.out.print("Enter age: ");
+                int age = scanner.nextInt();
+
+                System.out.print("Enter marks: ");
+                double marks = scanner.nextDouble();
+
+                preparedStatement.setString(1,name);
+                preparedStatement.setInt(2,age);
+                preparedStatement.setDouble(3,marks);
+
+               preparedStatement.addBatch();
+
+                System.out.print("Enter more data (y/n): ");
+                String choice = scanner.next();
+                if (choice.equalsIgnoreCase("n")) {
+                    break;
+                }
+            }
+
+            // Execute the batch after the loop
+            int[] results = preparedStatement.executeBatch();
+            for (int i = 0; i < results.length; i++) {
+                if (results[i] == Statement.EXECUTE_FAILED) {
+                    System.out.println("Query " + (i + 1) + " failed to execute.");
+                } else {
+                    System.out.println("Query " + (i + 1) + " executed successfully.");
+                }
             }
 
             conn.close();
+            scanner.close();
         } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC Driver not found.");
-            System.out.println(e.getMessage());
             e.printStackTrace();
         } catch (SQLException e) {
             System.out.println("Database connection failed.");
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
